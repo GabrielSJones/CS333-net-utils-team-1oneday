@@ -6,5 +6,7 @@ This tool is created to disassemble, mutate and reassemble an IP packet
 - Damian Robert
 - Dolan Lavoie
 
+## Getting Started
+- Install UV
 
 
