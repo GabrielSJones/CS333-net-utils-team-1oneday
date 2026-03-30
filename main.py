@@ -1,14 +1,43 @@
+import string
+
+class Packet:
+    def __init__(self, sections):
+
+        self.headerLen = None
+
+        self.header = None
+        self.payload = None
+        self.footer = None
+
+        self.src = sections[0]
+        self.dst = sections[1]
+        self.seq = sections[2]
+        self.ack = sections[3]
+        self.data_offset = sections[4]
+        self.reserved = sections[5]
+        self.flags = sections[6]
+        self.window = sections[7]
+        self.checksum = sections[8]
+        self.urgent_pointer = sections[9]
+        self.optionsAndPadding = sections[10]
+        self.data = None
+
+    def __str__(self):
+        return f"src: {self.src}\ndst: {self.dst}\nseq: {self.seq}\nack: {self.ack}\ndata_offset: {self.data_offset}\nreserved: {self.reserved}\nflags: {self.flags}\nwindow: {self.window}\nchecksum: {self.checksum}\nurgent_pointer: {self.urgent_pointer}\noptionsAndPadding: {self.optionsAndPadding}  "
+
 def split_bin_packet(packet):
     sections = []
-    TCP_Packet_Len_Array = [16, 16, 32, 32, 4, 4, 8, 16, 16, 16, 40]
+    TCP_Packet_Len_Array = [16, 16, 32, 32, 4, 4, 8, 16, 16, 16, 0]
 
-    chunk_size = TCP_Packet_Len_Array[0]
     offset = 0
-
-    for i in range(0, len(packet), chunk_size):
-        sections.append(packet[offset : i + TCP_Packet_Len_Array[i]])
+    print({len(TCP_Packet_Len_Array)})
+    for i in range(0, len(TCP_Packet_Len_Array), 1):
+        print(f"Processing section {i}\n")
+        sections.append(packet[offset : offset + TCP_Packet_Len_Array[i]])
         print(f"Section {i}: {sections[i]}")
-        offset = i + TCP_Packet_Len_Array[i]
+        offset = offset + TCP_Packet_Len_Array[i]
+
+    return sections
 
     # if len(sections) != 3:
     #     raise ValueError(
@@ -50,42 +79,20 @@ def main():
         elif all(char in "0123456789ABCDEF" for char in packet_data):
             print("Input is hexadecimal.")
             print("Converting hexadecimal to binary...")
-            packet_data = bin(int(packet_data, 16))  # Convert hex to binary
+            packet_data_bin = bin(int(packet_data, 16))  # Convert hex to bin
+            packet_data_hex = hex(int(packet_data, 16))
 
         else:
             raise ValueError("Input must be either binary or hexadecimal.")
 
-        print(f"Packet data: {packet_data}")
+        print(f"Packet data bin: {packet_data_bin}")
+        print(f"Packet data hex: {packet_data_hex}")
 
-        split_bin_packet(packet_data)
+        split_packet = split_bin_packet(packet_data_bin[2:])  # Remove '0b' prefix from bin str
+        testPacket = Packet(split_packet)
 
 
 if __name__ == "__main__":
     main()
 
 
-class Packet:
-    def __init__(self):
-
-        self.headerLen = None
-
-        self.header = None
-        self.payload = None
-        self.footer = None
-
-        self.src = None
-        self.dst = None
-        self.seq = None
-        self.ack = None
-        self.data_offset = None
-        self.reserved = None
-        self.flags = None
-        self.window = None
-        self.checksum = None
-        self.urgent_pointer = None
-        self.options = None
-        self.padding = None
-        self.data = None
-
-    def __str__(self):
-        return f"Header: {self.header}, Payload: {self.payload}, Footer: {self.footer}"
