@@ -1,6 +1,28 @@
 import string
 
-class Packet:
+class IP_Packet:
+    def __init__(self, sections):
+        self.header = None
+        self.payload = None
+        self.footer = None
+
+        self.version = sections[0]
+        self.ihl = sections[1]
+        self.TypeOfService = sections[2]
+        self.total_length = sections[4]
+        self.identification = sections[5]
+        self.flags = sections[6]
+        self.fragment_offset = sections[7]
+        self.ttl = sections[8]
+        self.protocol = sections[9]
+        self.header_checksum = sections[10]
+        self.src_ip = sections[11]
+        self.dst_ip = sections[12]
+
+    def __str__(self):
+        return f"version: {self.version}\nihl: {self.ihl}\ndscp: {self.dscp}\necn: {self.ecn}\ntotal_length: {self.total_length}\nidentification: {self.identification}\nflags: {self.flags}\nfragment_offset: {self.fragment_offset}\nttl: {self.ttl}\nprotocol: {self.protocol}\nheader_checksum: {self.header_checksum}\nsrc_ip: {self.src_ip}\ndst_ip: {self.dst_ip}  "
+
+class TCP_Packet:
     def __init__(self, sections):
 
         self.headerLen = None
@@ -89,7 +111,8 @@ def main():
         print(f"Packet data hex: {packet_data_hex}")
 
         split_packet = split_bin_packet(packet_data_bin[2:])  # Remove '0b' prefix from bin str
-        testPacket = Packet(split_packet)
+        testPacket = TCP_Packet(split_packet)
+        print(testPacket)
 
 
 if __name__ == "__main__":
